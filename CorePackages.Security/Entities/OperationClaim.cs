@@ -1,6 +1,8 @@
-﻿namespace BaseProject.Domain.Entities;
+﻿using CorePackages.Persistence.Repositories;
 
-public class OperationClaim : BaseEntity
+namespace CorePackages.Security.Entities;
+
+public class OperationClaim : Entity
 {
     public string Name { get; set; }
 

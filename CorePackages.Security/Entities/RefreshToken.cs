@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CorePackages.Persistence.Repositories;
 
-namespace BaseProject.Domain.Entities;
+namespace CorePackages.Security.Entities;
 
-public class RefreshToken : BaseEntity
+public class RefreshToken : Entity
 {
     public int UserId { get; set; }
     public string Token { get; set; }

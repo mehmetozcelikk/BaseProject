@@ -1,4 +1,4 @@
-﻿using BaseProject.Domain.Entities;
+﻿using CorePackages.Security.Entities;
 
 namespace BaseProject.Application.Abstractions
 {

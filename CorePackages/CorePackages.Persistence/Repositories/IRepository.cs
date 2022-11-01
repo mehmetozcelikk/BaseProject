@@ -1,7 +1,9 @@
-﻿using CorePackages.Persistence.Paging;
+﻿using System.Linq.Expressions;
+using CorePackages.Persistence.Dynamic;
+using CorePackages.Persistence.Paging;
 using CorePackages.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore.Query;
-using System.Linq.Expressions;
+
 
 public interface IRepository<T> : IQuery<T> where T : Entity
 {
@@ -13,7 +15,7 @@ public interface IRepository<T> : IQuery<T> where T : Entity
                          int index = 0, int size = 10,
                          bool enableTracking = true);
 
-    IPaginate<T> GetListByDynamic(Dynamic.Dynamic dynamic,
+    IPaginate<T> GetListByDynamic(Dynamic dynamic,
                                   Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
                                   int index = 0, int size = 10, bool enableTracking = true);
 

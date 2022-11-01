@@ -5,23 +5,25 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{CD53129B-97C3-480F-80AB-C6647DA89332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.Application", "Core\BaseProject.Application\BaseProject.Application.csproj", "{DEA01E18-6502-4FA3-A6BB-58C7900EE3AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Application", "Core\BaseProject.Application\BaseProject.Application.csproj", "{DEA01E18-6502-4FA3-A6BB-58C7900EE3AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{577A1ECA-3DE0-4F19-8727-B00EBCC11E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.Infrastructure", "Infrastructure\BaseProject.Infrastructure\BaseProject.Infrastructure.csproj", "{144BE948-0F04-41A3-A782-CA5D1691C8DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Infrastructure", "Infrastructure\BaseProject.Infrastructure\BaseProject.Infrastructure.csproj", "{144BE948-0F04-41A3-A782-CA5D1691C8DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.Persistence", "Infrastructure\BaseProject.Persistence\BaseProject.Persistence.csproj", "{2E6D6735-552F-41AA-B754-CC9897EAA209}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Persistence", "Infrastructure\BaseProject.Persistence\BaseProject.Persistence.csproj", "{2E6D6735-552F-41AA-B754-CC9897EAA209}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.Domain", "Core\BaseProject.Domain\BaseProject.Domain.csproj", "{6B6D2D5E-A5B7-4722-9FA8-3F869594F8C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.Domain", "Core\BaseProject.Domain\BaseProject.Domain.csproj", "{6B6D2D5E-A5B7-4722-9FA8-3F869594F8C2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{27EF6319-50D3-48EB-8EF8-52D75577B238}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.API", "Presentation\BaseProject.API\BaseProject.API.csproj", "{FF043AC5-982C-4CF0-AB96-43244FE6A543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.API", "Presentation\BaseProject.API\BaseProject.API.csproj", "{FF043AC5-982C-4CF0-AB96-43244FE6A543}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CorePackages", "CorePackages", "{FE683040-CCA8-41EC-99D8-CDC8025B48C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePackages.Persistence", "CorePackages\CorePackages.Persistence\CorePackages.Persistence.csproj", "{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePackages.Persistence", "CorePackages\CorePackages.Persistence\CorePackages.Persistence.csproj", "{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePackages.Security", "CorePackages.Security\CorePackages.Security.csproj", "{36A40BE9-E513-47C6-B4BD-7990E1892556}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A40BE9-E513-47C6-B4BD-7990E1892556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A40BE9-E513-47C6-B4BD-7990E1892556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A40BE9-E513-47C6-B4BD-7990E1892556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A40BE9-E513-47C6-B4BD-7990E1892556}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{6B6D2D5E-A5B7-4722-9FA8-3F869594F8C2} = {CD53129B-97C3-480F-80AB-C6647DA89332}
 		{FF043AC5-982C-4CF0-AB96-43244FE6A543} = {27EF6319-50D3-48EB-8EF8-52D75577B238}
 		{4EEF68A4-5508-415B-B9E7-4B13B3ACCCD0} = {FE683040-CCA8-41EC-99D8-CDC8025B48C7}
+		{36A40BE9-E513-47C6-B4BD-7990E1892556} = {FE683040-CCA8-41EC-99D8-CDC8025B48C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3C4F7CC-B2B5-4036-97C0-77154B31E5F1}

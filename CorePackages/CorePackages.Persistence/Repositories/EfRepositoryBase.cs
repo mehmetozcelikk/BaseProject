@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CorePackages.Persistence.Dynamic;
+using CorePackages.Persistence.Paging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace CorePackages.Persistence.Repositories;

@@ -1,5 +1,5 @@
 ﻿using BaseProject.Application.Abstractions;
-using BaseProject.Domain.Entities;
+using CorePackages.Security.Entities;
 
 namespace BaseProject.Persistence.Concretes
 {
