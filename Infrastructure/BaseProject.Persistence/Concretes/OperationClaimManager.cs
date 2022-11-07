@@ -1,7 +1,7 @@
-﻿using BaseProject.Application.Abstractions;
+﻿using BaseProject.Application.Abstractions.Services;
+using BaseProject.Application.Repositories;
+using BaseProject.Domain.Entities;
 using BaseProject.Persistence.Contexts;
-using CorePackages.Persistence.Repositories;
-using CorePackages.Security.Entities;
 
 namespace BaseProject.Persistence.Concretes;
 

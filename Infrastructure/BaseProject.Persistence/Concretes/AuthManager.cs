@@ -1,6 +1,6 @@
-﻿using BaseProject.Application.Abstractions;
-using CorePackages.Persistence.Paging;
-using CorePackages.Security.Entities;
+﻿using BaseProject.Application.Abstractions.Services;
+using BaseProject.Application.Paging;
+using BaseProject.Domain.Entities;
 using CorePackages.Security.JWT;
 using Microsoft.EntityFrameworkCore;
 

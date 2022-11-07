@@ -13,15 +13,16 @@ public class AuthController : BaseController
 [HttpPost("Register")]
 public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
 {
-    RegisterCommand registerCommand = new()
-    {
-        UserForRegisterDto = userForRegisterDto,
-        IpAddress = GetIpAddress()
-    };
+    //RegisterCommand registerCommand = new()
+    //{
+    //    UserForRegisterDto = userForRegisterDto,
+    //    IpAddress = GetIpAddress()
+    //};
 
-    RegisteredDto result = await Mediator.Send(registerCommand);
-    SetRefreshTokenToCookie(result.RefreshToken);
-    return Created("", result.AccessToken);
+    //RegisteredDto result = await Mediator.Send(registerCommand);
+    //SetRefreshTokenToCookie(result.RefreshToken);
+    //return Created("", result.AccessToken);
+    return Ok( );
 }
 
 private void SetRefreshTokenToCookie(RefreshToken refreshToken)

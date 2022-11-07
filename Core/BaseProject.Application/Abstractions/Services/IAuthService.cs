@@ -1,7 +1,7 @@
-﻿using CorePackages.Security.Entities;
+﻿using BaseProject.Domain.Entities;
 using CorePackages.Security.JWT;
 
-namespace BaseProject.Application.Abstractions;
+namespace BaseProject.Application.Abstractions.Services;
 
 public interface IAuthService
 {

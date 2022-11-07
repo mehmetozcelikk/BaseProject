@@ -1,4 +1,5 @@
-﻿using CorePackages.Security.Entities;
+﻿
+using BaseProject.Domain.Entities;
 
 namespace CorePackages.Security.JWT;
 

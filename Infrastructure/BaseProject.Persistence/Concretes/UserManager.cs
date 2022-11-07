@@ -1,7 +1,9 @@
-﻿using BaseProject.Application.Abstractions;
+﻿using BaseProject.Application.Abstractions.Services;
 using BaseProject.Application.DTOs;
+using BaseProject.Application.DTOs.User;
+using BaseProject.Application.Repositories.EntityRepositories;
+using BaseProject.Domain.Entities;
 using CorePackages.Security.Dtos;
-using CorePackages.Security.Entities;
 using CorePackages.Security.Hashing;
 using CorePackages.Security.JWT;
 
@@ -9,7 +11,12 @@ namespace BaseProject.Persistence.Concretes
 {
     public class UserManager : IUserService
     {
+        public UserRegisterDTO UserRegisterDTO { get; set; }
+
         IUserService _userService;
+        IAuthService _authService;
+        private readonly IUserRepository _userRepository;
+
         public List<User> GetUsers()
         {
             throw new NotImplementedException();
@@ -18,19 +25,22 @@ namespace BaseProject.Persistence.Concretes
         public string IpAddress { get; set; }
 
 
-        public UserManager( IUserService userService, IAuthService authService)
+ 
+
+        public UserManager(IUserService userService, IAuthService authService, IUserRepository userRepository)
         {
             _userService = userService;
             _authService = authService;
+            _userRepository = userRepository;
         }
 
-        public async Task<RegisteredDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<RegisteredDto> Handle(UserManager request, CancellationToken cancellationToken)
         {
-            await _authBusinessRules.EmailCanNotBeDuplicatedWhenRegistered(request.UserForRegisterDto.Email);
+            //await _authBusinessRules.EmailCanNotBeDuplicatedWhenRegistered(request.UserForRegisterDto.Email);
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(request.UserForRegisterDto.Password, out passwordHash, out passwordSalt);
-            User? user = await _userRepository.GetAsync(u => u.Email == email);
-            if (user != null) throw new BusinessException("Mail already exists");
+            //User? user = await _userService.GetAsync(u => u.Email == email);
+            //if (user != null) throw new BusinessException("Mail already exists");
 
             User newUser = new()
             {
@@ -50,7 +60,7 @@ namespace BaseProject.Persistence.Concretes
 
             RegisteredDto registeredDto = new()
             {
-                RefreshToken = addedRefreshToken,
+                //RefreshToken = addedRefreshToken,
                 AccessToken = createdAccessToken,
             };
             return registeredDto;

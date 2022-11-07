@@ -11,4 +11,8 @@
     <ProjectReference Include="..\BaseProject.Domain\BaseProject.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Paging\" />
+  </ItemGroup>
+
 </Project>

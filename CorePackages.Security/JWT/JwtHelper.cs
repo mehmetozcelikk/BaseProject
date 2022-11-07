@@ -1,5 +1,5 @@
-﻿using CorePackages.Security.Encryption;
-using CorePackages.Security.Entities;
+﻿using BaseProject.Domain.Entities;
+using CorePackages.Security.Encryption;
 using CorePackages.Security.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

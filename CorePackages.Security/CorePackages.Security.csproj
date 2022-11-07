@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CorePackages\CorePackages.Persistence\CorePackages.Persistence.csproj" />
+    <ProjectReference Include="..\Core\BaseProject.Domain\BaseProject.Domain.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
