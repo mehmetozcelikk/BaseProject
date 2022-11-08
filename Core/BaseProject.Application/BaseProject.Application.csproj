@@ -11,6 +11,19 @@
     <ProjectReference Include="..\BaseProject.Domain\BaseProject.Domain.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.2.2" />
+		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />	
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.2.2" />	
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.11">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.17" />
+
+	</ItemGroup>
   <ItemGroup>
     <Folder Include="Paging\" />
   </ItemGroup>

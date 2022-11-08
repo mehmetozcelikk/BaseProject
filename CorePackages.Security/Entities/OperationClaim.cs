@@ -1,4 +1,4 @@
-﻿using CorePackages.Persistence.Repositories;
+﻿using BaseProject.Domain.Entities;
 
 namespace CorePackages.Security.Entities;
 

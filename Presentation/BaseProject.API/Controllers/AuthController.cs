@@ -10,6 +10,8 @@ namespace BaseProject.API.Controllers;
 [ApiController]
 public class AuthController : BaseController
 {
+
+
 [HttpPost("Register")]
 public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
 {
