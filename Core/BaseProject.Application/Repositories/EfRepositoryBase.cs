@@ -17,6 +17,8 @@ public class EfRepositoryBase<TEntity, TContext> : IAsyncRepository<TEntity>, IR
     {
         Context = context;
     }
+    public DbSet<TEntity> Table => Context.Set<TEntity>();
+
 
     public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
@@ -62,6 +64,7 @@ public class EfRepositoryBase<TEntity, TContext> : IAsyncRepository<TEntity>, IR
     public async Task<TEntity> AddAsync(TEntity entity)
     {
         Context.Entry(entity).State = EntityState.Added;
+        //var aa = Context.Set<TEntity>().AddAsync(entity);
         await Context.SaveChangesAsync();
         return entity;
     }

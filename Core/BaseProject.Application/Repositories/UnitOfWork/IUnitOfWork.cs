@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Application.Repositories.UnitOfWork;
 
-public interface IUnitOfWork  : IDisposable
+public interface IUnitOfWork  : IAsyncDisposable ,IDisposable
 {
-    //IUserRepository userRepository { get; }
-    //IUserOperationClaimRepository userOperationClaimRepository { get; }
-    //IRefreshTokenRepository refreshTokenRepository { get; }
-    //IOperationClaimRepository operationClaimRepository { get; }
-    //Task<int> SaveAsync();
+    IUserRepository userRepository { get; }
+    IUserOperationClaimRepository userOperationClaimRepository { get; }
+    IRefreshTokenRepository refreshTokenRepository { get; }
+    IOperationClaimRepository operationClaimRepository { get; }
+    Task<int> SaveAsync();
 }
