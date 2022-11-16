@@ -24,11 +24,11 @@ public static class PersistenceServiceRegistration
                                                      configuration.GetConnectionString("SqlConnectionString")));
 
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        //services.AddScoped<IUserRepository, UserRepository>();
+        //services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
+        //services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        //services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
 
         services.AddScoped<IUserService, UserManager>();
         services.AddScoped<IRefreshTokenService, RefreshTokenManager>();

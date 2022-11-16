@@ -5,6 +5,7 @@ using BaseProject.Application.Repositories.EntityRepositories;
 using BaseProject.Application.Repositories.UnitOfWork;
 using BaseProject.Domain.Entities;
 using CorePackages.Security.Hashing;
+using CorePackages.Security.JWT;
 
 namespace BaseProject.Persistence.Concretes
 {
@@ -13,7 +14,7 @@ namespace BaseProject.Persistence.Concretes
         public UserRegisterDTO UserRegisterDTO { get; set; }
 
         IAuthService _authService;
-        private IUnitOfWork _unitOfWork;
+        protected IUnitOfWork _unitOfWork;
 
         public List<User> GetUsers()
         {
@@ -49,24 +50,25 @@ namespace BaseProject.Persistence.Concretes
                 Status = true
             };
 
-            try
-            {
-                User createdUser2 = await _unitOfWork.userRepository.AddAsync(newUser);
 
-                //var ıd = await _unitOfWork.SaveAsync();
-                //createdUser.Id = ıd;
+            try
+            {       
+
+                User createdUser =  _unitOfWork.userRepository.AddAsync(newUser).Result;
+                User createdUser2 =  await _unitOfWork.userRepository.AddAsync(newUser);
 
             }
             catch (Exception ex)
             {
-
                 throw;
             }
-            User createdUser = await _unitOfWork.userRepository.AddAsync(newUser);
 
-            //AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
-            //RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(createdUser, IpAddress);
-            //RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+
+            //User createdUser = await _unitOfWork.userRepository.AddAsync(newUser);
+
+            //AccessToken createdAccessToken =  _authService.CreateAccessToken(createdUser).Result;
+            //RefreshToken createdRefreshToken = _authService.CreateRefreshToken(createdUser, IpAddress).Result;
+            //RefreshToken addedRefreshToken =  _authService.AddRefreshToken(createdRefreshToken).Result;
 
             RegisteredDto registeredDto = new()
             {

@@ -6,25 +6,26 @@ namespace BaseProject.Persistence.Contexts;
 
 public class BaseDbContext : DbContext
 {
-    protected IConfiguration Configuration { get; set; }
 
+    public BaseDbContext()
+    {
+
+    }
     public DbSet<User> Users { get; set; }
     public DbSet<OperationClaim> OperationClaims { get; set; }
     public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
-    public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
-    {
-        Configuration = configuration;
-    }
 
+    public BaseDbContext(DbContextOptions options) : base(options)
+    { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-            base.OnConfiguring(
-                optionsBuilder.UseNpgsql(Configuration.GetConnectionString("SqlConnectionString")));
+        //if (!optionsBuilder.IsConfigured)
+        //    base.OnConfiguring(
+        //        optionsBuilder.UseNpgsql(Configuration.GetConnectionString("SqlConnectionString")));
 
     }
 

@@ -34,6 +34,7 @@ public class AuthController : BaseController
         registerDTO.Email = userForRegisterDto.Email;
         registerDTO.Password = userForRegisterDto.Password;
         registerDTO.FirstName = userForRegisterDto.FirstName;
+        registerDTO.LastName = userForRegisterDto.FirstName;
         var response = _userService.UserRegister(registerDTO);
         //RegisteredDto result = await Mediator.Send(registerCommand);
         //SetRefreshTokenToCookie(result.RefreshToken);

@@ -28,11 +28,12 @@ namespace BaseProject.Persistence.Repositories.UnitOfWork
             _context.Dispose();
         }
 
+        //public async Task<int> SaveAsync()
+        //{
+        //    return await _context.SaveChangesAsync();
+        //}
         public async Task<int> SaveAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
-
+    => await _context.SaveChangesAsync();
         public async ValueTask DisposeAsync()
         {
            await _context.DisposeAsync();
