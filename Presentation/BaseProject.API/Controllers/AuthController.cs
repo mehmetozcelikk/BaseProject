@@ -1,12 +1,7 @@
 ﻿using BaseProject.Application.Abstractions.Services;
-using BaseProject.Application.DTOs;
 using BaseProject.Application.DTOs.User;
-using BaseProject.Application.Repositories.EntityRepositories;
-using CorePackages.Security.Dtos;
-using CorePackages.Security.Entities;
-using Microsoft.AspNetCore.Http;
+using BaseProject.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using UserForRegisterDto = CorePackages.Security.Dtos.UserForRegisterDto;
 
 namespace BaseProject.API.Controllers;
 

@@ -19,16 +19,18 @@ public static class PersistenceServiceRegistration
     {
         //services.AddDbContext<BaseDbContext>(options =>
         //                                         options.UseSqlServer(
-        //                                             configuration.GetConnectionString("SqlConnectionString")));
+        //                                             configuration.GetConnectionString("SqlConnectionString")))
+        //
+        //                                             ;
         services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(
                                                      configuration.GetConnectionString("SqlConnectionString")));
 
 
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
-        //services.AddScoped<IUserRepository, UserRepository>();
-        //services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
-        //services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        //services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
 
         services.AddScoped<IUserService, UserManager>();
         services.AddScoped<IRefreshTokenService, RefreshTokenManager>();
@@ -38,11 +40,7 @@ public static class PersistenceServiceRegistration
 
 
 
-        //services.AddScoped<IUserRepository, UserRepository>();
-        //services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        //services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
-        //services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
-        //services.AddScoped<IAuthService, AuthManager>();
+
 
         return services;
 
