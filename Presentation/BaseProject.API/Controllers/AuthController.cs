@@ -30,13 +30,18 @@ public class AuthController : BaseController
         registerDTO.Password = userForRegisterDto.Password;
         registerDTO.FirstName = userForRegisterDto.FirstName;
         registerDTO.LastName = userForRegisterDto.FirstName;
-        var response = _userService.UserRegister(registerDTO);
+        registerDTO.IpAdress = GetIpAddress();
+        var response = await _userService.UserRegister(registerDTO);
         //RegisteredDto result = await Mediator.Send(registerCommand);
         //SetRefreshTokenToCookie(result.RefreshToken);
         //return Created("", result.AccessToken);
         return Ok();
     }
-
+    protected string? GetIpAddress()
+    {
+        if (Request.Headers.ContainsKey("X-Forwarded-For")) return Request.Headers["X-Forwarded-For"];
+        return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+    }
     private void SetRefreshTokenToCookie(RefreshToken refreshToken)
     {
         CookieOptions cookieOptions = new() { HttpOnly = true, Expires = DateTime.Now.AddDays(7) };
