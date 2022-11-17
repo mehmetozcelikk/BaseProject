@@ -1,6 +1,8 @@
 ﻿using BaseProject.Application.Abstractions.Services;
 using BaseProject.Application.DTOs;
+using BaseProject.Application.DTOs.Page;
 using BaseProject.Application.DTOs.User;
+using BaseProject.Application.Paging;
 using BaseProject.Application.Repositories.EntityRepositories;
 using BaseProject.Application.Repositories.UnitOfWork;
 using BaseProject.Domain.Entities;
@@ -17,14 +19,13 @@ namespace BaseProject.Persistence.Concretes
         IAuthService _authService;
         protected IUnitOfWork _unitOfWork;
 
-        public List<User> GetUsers()
+        public async Task<IPaginate<User>> GetUsers(PageRequest pageRequest)
         {
-            throw new NotImplementedException();
+            var users = await _unitOfWork.userRepository.GetListAsync(index:pageRequest.Page ,size:pageRequest.PageSize);
+            return users;
         }
         public UserForRegisterDto UserForRegisterDto { get; set; }
         public string IpAddress { get; set; }
-
-
 
 
         public UserManager(IAuthService authService, IUnitOfWork unitOfWork)
@@ -35,25 +36,24 @@ namespace BaseProject.Persistence.Concretes
 
         public async Task<RegisteredDto> UserRegister(UserRegisterDTO request)
         {
-            ////await _authBusinessRules.EmailCanNotBeDuplicatedWhenRegistered(request.UserForRegisterDto.Email);
             byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);
-            User? user = await _unitOfWork.userRepository.GetAsync(u => u.Email == request.Email);
+            HashingHelper.CreatePasswordHash(request.userForRegisterDto.Password, out passwordHash, out passwordSalt);
+
+            User? user = await _unitOfWork.userRepository.GetAsync(u => u.Email == request.userForRegisterDto.Email);
             if (user != null) throw new BusinessException("Mail already exists");
+
+
             var count = _unitOfWork.userRepository.GetList();
             User newUser = new()
             {
-                Email = request.Email,
-                //PasswordHash = passwordHash,
-                //PasswordSalt = passwordSalt,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                Email = request.userForRegisterDto.Email,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                FirstName = request.userForRegisterDto.FirstName,
+                LastName = request.userForRegisterDto.LastName,
                 Status = true
             };
-
-
             User createdUser = _unitOfWork.userRepository.AddAsync(newUser).Result;
-
 
             AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
             RefreshToken createdRefreshToken =  await _authService.CreateRefreshToken(createdUser, request.IpAdress);
@@ -61,8 +61,8 @@ namespace BaseProject.Persistence.Concretes
 
             RegisteredDto registeredDto = new()
             {
-                //RefreshToken = addedRefreshToken,
-                //AccessToken = createdAccessToken,
+                RefreshToken = addedRefreshToken,
+                AccessToken = createdAccessToken,
             };
             return registeredDto;
 

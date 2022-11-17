@@ -1,6 +1,9 @@
 ﻿using BaseProject.Application.Abstractions.Services;
+using BaseProject.Application.DTOs.Page;
 using BaseProject.Application.DTOs.User;
+using BaseProject.Application.Paging;
 using BaseProject.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BaseProject.API.Controllers;
@@ -20,22 +23,13 @@ public class AuthController : BaseController
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
     {
-        //RegisterCommand registerCommand = new()
-        //{
-        //    UserForRegisterDto = userForRegisterDto,
-        //    IpAddress = GetIpAddress()
-        //};
+
         UserRegisterDTO registerDTO = new UserRegisterDTO();
-        registerDTO.Email = userForRegisterDto.Email;
-        registerDTO.Password = userForRegisterDto.Password;
-        registerDTO.FirstName = userForRegisterDto.FirstName;
-        registerDTO.LastName = userForRegisterDto.FirstName;
+        registerDTO.userForRegisterDto = userForRegisterDto;
         registerDTO.IpAdress = GetIpAddress();
         var response = await _userService.UserRegister(registerDTO);
-        //RegisteredDto result = await Mediator.Send(registerCommand);
-        //SetRefreshTokenToCookie(result.RefreshToken);
-        //return Created("", result.AccessToken);
-        return Ok();
+        SetRefreshTokenToCookie(response.RefreshToken);
+        return Created("", response.AccessToken);
     }
     protected string? GetIpAddress()
     {
@@ -47,5 +41,16 @@ public class AuthController : BaseController
         CookieOptions cookieOptions = new() { HttpOnly = true, Expires = DateTime.Now.AddDays(7) };
         Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("GetAllUsers") ,Authorize()]
+    public async Task<IActionResult> GetAllUsers([FromBody] PageRequest pageRequest)
+    {
+       var aaa = await _userService.GetUsers(pageRequest);
 
+
+        return Ok( aaa);
+    }
 }
