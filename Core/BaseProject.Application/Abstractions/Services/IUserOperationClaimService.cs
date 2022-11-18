@@ -3,6 +3,6 @@ using BaseProject.Domain.Entities;
 
 namespace BaseProject.Application.Abstractions.Services;
 
-public interface IUserOperationClaimService : IAsyncRepository<UserOperationClaim>, IRepository<UserOperationClaim>
+public interface IUserOperationClaimService 
 {
 }

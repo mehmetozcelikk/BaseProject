@@ -5,9 +5,12 @@ using BaseProject.Persistence.Contexts;
 
 namespace BaseProject.Persistence.Concretes;
 
-public class RefreshTokenManager : EfRepositoryBase<RefreshToken, BaseDbContext>, IRefreshTokenService
+public class RefreshTokenManager : IRefreshTokenService
 {
-    public RefreshTokenManager(BaseDbContext context) : base(context)
+    public RefreshTokenManager( )
     {
     }
+
+
+
 }

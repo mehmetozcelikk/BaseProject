@@ -9,9 +9,15 @@ namespace BaseProject.Application.Repositories.UnitOfWork;
 
 public interface IUnitOfWork  : IAsyncDisposable ,IDisposable
 {
+
+    IEmailAuthenticatorRepository emailAuthenticatorRepository { get; }
+
+    IOperationClaimRepository operationClaimRepository { get; }
+    IOtpAuthenticatorRepository otpAuthenticatorRepository { get; }
+    IRefreshTokenRepository refreshTokenRepository { get; }
+
     IUserRepository userRepository { get; }
     IUserOperationClaimRepository userOperationClaimRepository { get; }
-    IRefreshTokenRepository refreshTokenRepository { get; }
-    IOperationClaimRepository operationClaimRepository { get; }
+
     Task<int> SaveAsync();
 }

@@ -3,7 +3,6 @@ using BaseProject.Application.DTOs;
 using BaseProject.Application.DTOs.Page;
 using BaseProject.Application.DTOs.User;
 using BaseProject.Application.Paging;
-using BaseProject.Application.Repositories.EntityRepositories;
 using BaseProject.Application.Repositories.UnitOfWork;
 using BaseProject.Domain.Entities;
 using CorePackages.CrossCuttingConcerns.Exceptions;
@@ -17,11 +16,11 @@ namespace BaseProject.Persistence.Concretes
         public UserRegisterDTO UserRegisterDTO { get; set; }
 
         IAuthService _authService;
-        protected IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         public async Task<IPaginate<User>> GetUsers(PageRequest pageRequest)
         {
-            var users = await _unitOfWork.userRepository.GetListAsync(index:pageRequest.Page ,size:pageRequest.PageSize);
+            var users = await _unitOfWork.userRepository.GetListAsync(index: pageRequest.Page, size: pageRequest.PageSize);
             return users;
         }
         public UserForRegisterDto UserForRegisterDto { get; set; }
@@ -56,7 +55,7 @@ namespace BaseProject.Persistence.Concretes
             User createdUser = _unitOfWork.userRepository.AddAsync(newUser).Result;
 
             AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
-            RefreshToken createdRefreshToken =  await _authService.CreateRefreshToken(createdUser, request.IpAdress);
+            RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(createdUser, request.IpAdress);
             RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
             RegisteredDto registeredDto = new()
@@ -67,6 +66,33 @@ namespace BaseProject.Persistence.Concretes
             return registeredDto;
 
         }
+
+
+        public async Task<User?> GetByEmail(string email)
+        {
+            User? user = await _unitOfWork.userRepository.GetAsync(u => u.Email == email);
+            return user;
+        }
+
+        public async Task<User> GetById(int id)
+        {
+            User? user = await _unitOfWork.userRepository.GetAsync(u => u.Id == id);
+            return user;
+        }
+
+        public async Task<User> Update(User user)
+        {
+            User updatedUser = await _unitOfWork.userRepository.UpdateAsync(user);
+            return updatedUser;
+        }
+
+
+
+
+
+
+
+
     }
 
 }

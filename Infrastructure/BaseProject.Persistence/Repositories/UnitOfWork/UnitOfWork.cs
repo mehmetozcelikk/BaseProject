@@ -7,12 +7,16 @@ namespace BaseProject.Persistence.Repositories.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BaseDbContext _context;
+
+
+        public IEmailAuthenticatorRepository emailAuthenticatorRepository { get; private set; }
+
+        public IOperationClaimRepository operationClaimRepository { get; private set; }
+        public IOtpAuthenticatorRepository otpAuthenticatorRepository { get; private set; }
+        public IRefreshTokenRepository refreshTokenRepository { get; private set; }
+
         public IUserRepository userRepository { get; private set; }
         public IUserOperationClaimRepository userOperationClaimRepository { get; private set; }
-        public IRefreshTokenRepository refreshTokenRepository { get; private set; }
-        public IOperationClaimRepository operationClaimRepository { get; private set; }
-
-
         public UnitOfWork(BaseDbContext context)
         {
             _context = context;
@@ -36,7 +40,7 @@ namespace BaseProject.Persistence.Repositories.UnitOfWork
     => await _context.SaveChangesAsync();
         public async ValueTask DisposeAsync()
         {
-           await _context.DisposeAsync();
+            await _context.DisposeAsync();
         }
     }
 }

@@ -5,9 +5,9 @@ using BaseProject.Persistence.Contexts;
 
 namespace BaseProject.Persistence.Concretes;
 
-public class OperationClaimManager : EfRepositoryBase<OperationClaim, BaseDbContext>, IOperationClaimService
+public class OperationClaimManager :  IOperationClaimService
 {
-    public OperationClaimManager(BaseDbContext context) : base(context)
+    public OperationClaimManager( ) 
     {
     }
 }

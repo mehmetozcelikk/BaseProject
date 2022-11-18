@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CorePackages.CrossCuttingConcerns\CorePackages.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\..\CorePackages.Mailing\CorePackages.Mailing.csproj" />
     <ProjectReference Include="..\..\CorePackages.Security\CorePackages.Security.csproj" />
     <ProjectReference Include="..\BaseProject.Domain\BaseProject.Domain.csproj" />
   </ItemGroup>
