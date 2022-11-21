@@ -1,5 +1,4 @@
-﻿
-namespace BaseProject.Domain.Entities;
+﻿namespace BaseProject.Domain.Entities;
 
 public class UserOperationClaim : Entity
 {

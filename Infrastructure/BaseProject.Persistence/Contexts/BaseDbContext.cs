@@ -1,6 +1,5 @@
 ﻿using BaseProject.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace BaseProject.Persistence.Contexts;
 
