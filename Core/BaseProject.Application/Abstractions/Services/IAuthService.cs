@@ -1,4 +1,6 @@
-﻿using BaseProject.Domain.Entities;
+﻿using BaseProject.Application.DTOs.Auth;
+using BaseProject.Application.DTOs.User;
+using BaseProject.Domain.Entities;
 using CorePackages.Security.JWT;
 
 namespace BaseProject.Application.Abstractions.Services;
@@ -29,7 +31,13 @@ public interface IAuthService
 
 
 
-
+    public Task<VerifyEmailAuthenticatorDTO> VerifyEmailAuthenticator(VerifyEmailAuthenticatorDTO request);
+    public Task<EnableEmailAuthenticatorDTO> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request);
+    public Task<LoggedDto> Login(UserLoginDTO request);
+    public Task<RefreshedTokensDto> RefreshToken(RefreshTokenDTO request);
+    public Task<EnabledOtpAuthenticatorDto> EnableOtpAuthenticator(EnableOtpAuthenticatorDTO request);
+    public Task<VerifyOtpAuthenticatorDTO> VerifyOtpAuthenticator(VerifyOtpAuthenticatorDTO request);
+    public Task<RevokeTokenDTO> RevokeToken(RevokeTokenDTO request);
 
 
 

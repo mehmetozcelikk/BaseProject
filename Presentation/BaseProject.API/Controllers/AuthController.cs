@@ -1,9 +1,9 @@
 ﻿using BaseProject.Application.Abstractions.Services;
-using BaseProject.Application.DTOs;
+using BaseProject.Application.DTOs.Auth;
 using BaseProject.Application.DTOs.Page;
 using BaseProject.Application.DTOs.User;
-using BaseProject.Application.Paging;
 using BaseProject.Domain.Entities;
+using CorePackages.Security.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -48,13 +48,13 @@ public class AuthController : BaseController
     /// 
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetAllUsers") ,Authorize()]
+    [HttpGet("GetAllUsers"), Authorize()]
     public async Task<IActionResult> GetAllUsers([FromQuery] PageRequest pageRequest)
     {
-       var aaa = await _userService.GetUsers(pageRequest);
+        var aaa = await _userService.GetUsers(pageRequest);
 
 
-        return Ok( aaa);
+        return Ok(aaa);
     }
 
 
@@ -63,39 +63,33 @@ public class AuthController : BaseController
 
 
 
-
-
-    public AuthController(IConfiguration configuration)
-    {
-        _configuration = configuration.GetSection("WebAPIConfiguration").Get<WebAPIConfiguration>();
-    }
 
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
     {
-        userForLoginDto.IPAddress = GetIpAddress() ;
-        var result = await _authService.Login(userForLoginDto);
+        UserLoginDTO userLogin = new() { userForLoginDto = userForLoginDto, IPAddress = GetIpAddress() };
+        var result = await _authService.Login(userLogin);
 
         if (result.RefreshToken is not null) setRefreshTokenToCookie(result.RefreshToken);
 
         return Ok(result.CreateResponseDto());
     }
 
-    [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
-    {
-        RegisterCommand registerCommand = new() { UserForRegisterDto = userForRegisterDto, IPAddress = getIpAddress() };
-        RegisteredDto result = await Mediator.Send(registerCommand);
-        setRefreshTokenToCookie(result.RefreshToken);
-        return Created("", result.AccessToken);
-    }
+    //[HttpPost("Register")]
+    //public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
+    //{
+    //    UserRegisterDTO registerDTO = new() { userForRegisterDto = userForRegisterDto, IpAdress = GetIpAddress() };
+    //    var result = await _userService.UserRegister(registerDTO);
+    //    setRefreshTokenToCookie(result.RefreshToken);
+    //    return Created("", result.AccessToken);
+    //}
 
     [HttpGet("RefreshToken")]
     public async Task<IActionResult> RefreshToken()
     {
-        RefreshTokenCommand refreshTokenCommand = new()
-        { RefleshToken = getRefreshTokenFromCookies(), IPAddress = getIpAddress() };
-        RefreshedTokensDto result = await Mediator.Send(refreshTokenCommand);
+        RefreshTokenDTO request = new()
+        { RefleshToken = getRefreshTokenFromCookies(), IPAddress = GetIpAddress() };
+        RefreshedTokensDto result = await _authService.RefreshToken(request);
         setRefreshTokenToCookie(result.RefreshToken);
         return Created("", result.AccessToken);
     }
@@ -105,41 +99,46 @@ public class AuthController : BaseController
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
         string? refreshToken)
     {
-        RevokeTokenCommand revokeTokenCommand = new()
+        RevokeTokenDTO request = new()
         {
             Token = refreshToken ?? getRefreshTokenFromCookies(),
-            IPAddress = getIpAddress()
+            IPAddress = GetIpAddress()
         };
-        RevokedTokenDto result = await Mediator.Send(revokeTokenCommand);
+        RevokeTokenDTO result = await _authService.RevokeToken(request);
         return Ok(result);
     }
 
     [HttpGet("EnableEmailAuthenticator")]
-    public async Task<IActionResult> EnableEmailAuthenticator()
+    public async Task<IActionResult> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request)
     {
 
-        await _authService.EnableEmailAuthenticator();
+        await _authService.EnableEmailAuthenticator(request);
 
         return Ok();
+    }
+    protected int getUserIdFromRequest() //todo authentication behavior?
+    {
+        int userId = HttpContext.User.GetUserId();
+        return userId;
     }
 
     [HttpGet("EnableOtpAuthenticator")]
     public async Task<IActionResult> EnableOtpAuthenticator()
     {
-        EnableOtpAuthenticatorCommand enableOtpAuthenticatorCommand = new()
+        EnableOtpAuthenticatorDTO enableOtpAuthenticatorCommand = new()
         {
             UserId = getUserIdFromRequest()
         };
-        EnabledOtpAuthenticatorDto result = await Mediator.Send(enableOtpAuthenticatorCommand);
+        EnabledOtpAuthenticatorDto result = await _authService.EnableOtpAuthenticator(enableOtpAuthenticatorCommand);
 
         return Ok(result);
     }
 
     [HttpGet("VerifyEmailAuthenticator")]
     public async Task<IActionResult> VerifyEmailAuthenticator(
-        [FromQuery] VerifyEmailAuthenticatorCommand verifyEmailAuthenticatorCommand)
+        [FromQuery] VerifyEmailAuthenticatorDTO verifyEmailAuthenticatorCommand)
     {
-        await Mediator.Send(verifyEmailAuthenticatorCommand);
+        await _authService.VerifyEmailAuthenticator(verifyEmailAuthenticatorCommand);
         return Ok();
     }
 
@@ -147,10 +146,10 @@ public class AuthController : BaseController
     public async Task<IActionResult> VerifyOtpAuthenticator(
         [FromBody] string authenticatorCode)
     {
-        VerifyOtpAuthenticatorCommand verifyEmailAuthenticatorCommand =
+        VerifyOtpAuthenticatorDTO request =
             new() { UserId = getUserIdFromRequest(), ActivationCode = authenticatorCode };
 
-        await Mediator.Send(verifyEmailAuthenticatorCommand);
+        await _authService.VerifyOtpAuthenticator(request);
         return Ok();
     }
 
