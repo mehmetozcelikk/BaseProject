@@ -14,7 +14,6 @@ namespace BaseProject.Persistence.Concretes
     public class UserManager : IUserService
     {
 
-        private readonly IAuthService _authService;
         private readonly IUnitOfWork _unitOfWork;
 
         public async Task<IPaginate<User>> GetUsers(PageRequest pageRequest)
@@ -23,45 +22,44 @@ namespace BaseProject.Persistence.Concretes
             return users;
         }
 
-        public UserManager(IAuthService authService, IUnitOfWork unitOfWork)
+        public UserManager( IUnitOfWork unitOfWork)
         {
-            _authService = authService;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<RegisteredDto> UserRegister(UserRegisterDTO request)
-        {
-            byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(request.userForRegisterDto.Password, out passwordHash, out passwordSalt);
+        //public async Task<RegisteredDto> UserRegister(UserRegisterDTO request)
+        //{
+        //    byte[] passwordHash, passwordSalt;
+        //    HashingHelper.CreatePasswordHash(request.userForRegisterDto.Password, out passwordHash, out passwordSalt);
 
-            User? user = await _unitOfWork.userRepository.GetAsync(u => u.Email == request.userForRegisterDto.Email);
-            if (user != null) throw new BusinessException("Mail already exists");
+        //    User? user = await _unitOfWork.userRepository.GetAsync(u => u.Email == request.userForRegisterDto.Email);
+        //    if (user != null) throw new BusinessException("Mail already exists");
 
 
-            var count = _unitOfWork.userRepository.GetList();
-            User newUser = new()
-            {
-                Email = request.userForRegisterDto.Email,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                FirstName = request.userForRegisterDto.FirstName,
-                LastName = request.userForRegisterDto.LastName,
-                Status = true
-            };
-            User createdUser = _unitOfWork.userRepository.AddAsync(newUser).Result;
+        //    var count = _unitOfWork.userRepository.GetList();
+        //    User newUser = new()
+        //    {
+        //        Email = request.userForRegisterDto.Email,
+        //        PasswordHash = passwordHash,
+        //        PasswordSalt = passwordSalt,
+        //        FirstName = request.userForRegisterDto.FirstName,
+        //        LastName = request.userForRegisterDto.LastName,
+        //        Status = true
+        //    };
+        //    User createdUser = _unitOfWork.userRepository.AddAsync(newUser).Result;
 
-            AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
-            RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(createdUser, request.IpAdress);
-            RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+        //    AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
+        //    RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(createdUser, request.IpAdress);
+        //    RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
-            RegisteredDto registeredDto = new()
-            {
-                RefreshToken = addedRefreshToken,
-                AccessToken = createdAccessToken,
-            };
-            return registeredDto;
+        //    RegisteredDto registeredDto = new()
+        //    {
+        //        RefreshToken = addedRefreshToken,
+        //        AccessToken = createdAccessToken,
+        //    };
+        //    return registeredDto;
 
-        }
+        //}
 
 
         public async Task<User?> GetByEmail(string email)

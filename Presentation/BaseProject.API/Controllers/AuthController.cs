@@ -30,7 +30,7 @@ public class AuthController : BaseController
         UserRegisterDTO registerDTO = new UserRegisterDTO();
         registerDTO.userForRegisterDto = userForRegisterDto;
         registerDTO.IpAdress = GetIpAddress();
-        var response = await _userService.UserRegister(registerDTO);
+        var response = await _authService.Register(registerDTO);
         SetRefreshTokenToCookie(response.RefreshToken);
         return Created("", response.AccessToken);
     }

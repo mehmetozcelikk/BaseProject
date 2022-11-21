@@ -39,11 +39,14 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IOtpAuthenticatorRepository, OtpAuthenticatorRepository>();
         services.AddScoped<IEmailAuthenticatorRepository, EmailAuthenticatorRepository>();
 
-        services.AddScoped<IUserService, UserManager>();
+
+        services.AddTransient<IAuthService, AuthManager>();
+
+        services.AddTransient<IUserService, UserManager>();
+
         services.AddScoped<IRefreshTokenService, RefreshTokenManager>();
         services.AddScoped<IOperationClaimService, OperationClaimManager>();
         services.AddScoped<IUserOperationClaimService, UserOperationManager>();
-        services.AddScoped<IAuthService, AuthManager>();
         services.AddSingleton<IMailService, MailKitMailService>();
 
 

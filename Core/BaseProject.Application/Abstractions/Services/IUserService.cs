@@ -13,7 +13,7 @@ public interface IUserService
     public Task<User> GetById(int id);
     public Task<User> Update(User user);
 
-    Task<RegisteredDto> UserRegister(UserRegisterDTO request);
+    //Task<RegisteredDto> UserRegister(UserRegisterDTO request);
 
     Task<IPaginate<User>> GetUsers(PageRequest pageRequest);
 }

@@ -26,6 +26,7 @@ public interface IAuthService
     public Task<string> ConvertSecretKeyToString(byte[] secretKey);
     public Task SendAuthenticatorCode(User user);
     public Task VerifyAuthenticatorCode(User user, string authenticatorCode);
+    public Task<RegisteredDto> Register(UserRegisterDTO request);
 
 
 
