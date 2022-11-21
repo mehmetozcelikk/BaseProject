@@ -22,17 +22,17 @@ public class AuthManager : IAuthService
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenHelper _tokenHelper;
     private readonly IOtpAuthenticatorHelper _otpAuthenticatorHelper;
-    private readonly TokenOptions _tokenOptions;
+    //private readonly TokenOptions _tokenOptions;
     private readonly IEmailAuthenticatorHelper _emailAuthenticatorHelper;
     private readonly IMailService _mailService;
     private readonly IUserService _userService;
 
-    public AuthManager(IUnitOfWork unitOfWork, ITokenHelper tokenHelper, IOtpAuthenticatorHelper otpAuthenticatorHelper, TokenOptions tokenOptions, IEmailAuthenticatorHelper emailAuthenticatorHelper, IMailService mailService, IUserService userService)
+    public AuthManager(IUnitOfWork unitOfWork, ITokenHelper tokenHelper, IOtpAuthenticatorHelper otpAuthenticatorHelper,/* TokenOptions tokenOptions, */IEmailAuthenticatorHelper emailAuthenticatorHelper, IMailService mailService, IUserService userService)
     {
         _unitOfWork = unitOfWork;
         _tokenHelper = tokenHelper;
         _otpAuthenticatorHelper = otpAuthenticatorHelper;
-        _tokenOptions = tokenOptions;
+        //_tokenOptions = tokenOptions;
         _emailAuthenticatorHelper = emailAuthenticatorHelper;
         _mailService = mailService;
         _userService = userService;
@@ -101,9 +101,7 @@ public class AuthManager : IAuthService
     {
         IList<RefreshToken> refreshTokens = (await _unitOfWork.refreshTokenRepository.GetListAsync(r =>
                                                  r.UserId == userId &&
-                                                 r.Revoked == null && r.Expires >= DateTime.UtcNow &&
-                                                 r.Created.AddDays(_tokenOptions.RefreshTokenTTL) <=
-                                                 DateTime.UtcNow)
+                                                 r.Revoked == null && r.Expires >= DateTime.UtcNow )
                                             ).Items;
         foreach (RefreshToken refreshToken in refreshTokens) await _unitOfWork.refreshTokenRepository.DeleteAsync(refreshToken);
     }

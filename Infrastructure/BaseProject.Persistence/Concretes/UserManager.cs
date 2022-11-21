@@ -13,9 +13,8 @@ namespace BaseProject.Persistence.Concretes
 {
     public class UserManager : IUserService
     {
-        public UserRegisterDTO UserRegisterDTO { get; set; }
 
-        IAuthService _authService;
+        private readonly IAuthService _authService;
         private readonly IUnitOfWork _unitOfWork;
 
         public async Task<IPaginate<User>> GetUsers(PageRequest pageRequest)
@@ -23,9 +22,6 @@ namespace BaseProject.Persistence.Concretes
             var users = await _unitOfWork.userRepository.GetListAsync(index: pageRequest.Page, size: pageRequest.PageSize);
             return users;
         }
-        public UserForRegisterDto UserForRegisterDto { get; set; }
-        public string IpAddress { get; set; }
-
 
         public UserManager(IAuthService authService, IUnitOfWork unitOfWork)
         {

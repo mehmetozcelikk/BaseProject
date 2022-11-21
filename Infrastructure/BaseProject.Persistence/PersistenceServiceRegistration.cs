@@ -5,6 +5,8 @@ using BaseProject.Persistence.Concretes;
 using BaseProject.Persistence.Contexts;
 using BaseProject.Persistence.Repositories;
 using BaseProject.Persistence.Repositories.UnitOfWork;
+using CorePackages.Mailing;
+using CorePackages.Mailing.MailKitImplementations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,23 +24,27 @@ public static class PersistenceServiceRegistration
         //                                             configuration.GetConnectionString("SqlConnectionString")))
         //
         //                                             ;
+
+
         services.AddDbContext<BaseDbContext>(options => options.UseNpgsql(
                                                      configuration.GetConnectionString("SqlConnectionString")));
 
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
+        services.AddScoped<IOtpAuthenticatorRepository, OtpAuthenticatorRepository>();
+        services.AddScoped<IEmailAuthenticatorRepository, EmailAuthenticatorRepository>();
 
         services.AddScoped<IUserService, UserManager>();
         services.AddScoped<IRefreshTokenService, RefreshTokenManager>();
         services.AddScoped<IOperationClaimService, OperationClaimManager>();
         services.AddScoped<IUserOperationClaimService, UserOperationManager>();
         services.AddScoped<IAuthService, AuthManager>();
-
-
+        services.AddSingleton<IMailService, MailKitMailService>();
 
 
 

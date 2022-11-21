@@ -6,6 +6,7 @@ using BaseProject.Application.DTOs.UserOperationClaims;
 using BaseProject.Application.Paging;
 using BaseProject.Application.Repositories;
 using BaseProject.Application.Repositories.EntityRepositories;
+using BaseProject.Application.Repositories.UnitOfWork;
 using BaseProject.Domain.Entities;
 using BaseProject.Persistence.Contexts;
 using CorePackages.CrossCuttingConcerns.Exceptions;
@@ -15,26 +16,22 @@ namespace BaseProject.Persistence.Concretes;
 public class UserOperationManager : IUserOperationClaimService
 {
 
-    private readonly IUserOperationClaimRepository _userOperationClaimRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public UserOperationManager(IUserOperationClaimRepository userOperationClaimRepository,
-                                                 IMapper mapper
-                                                  )
+    public UserOperationManager(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _userOperationClaimRepository = userOperationClaimRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-
-
 
     public async Task<UserOperationClaimDto> GetById(UserOperationClaimDto request
                                                      )
     {
-        UserOperationClaim? result = await _userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
+        UserOperationClaim? result = await _unitOfWork.userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
         if (result == null) throw new BusinessException(UserOperationClaimMessages.UserOperationClaimNotExists);
         UserOperationClaim? userOperationClaim =
-            await _userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
+            await _unitOfWork.userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
         UserOperationClaimDto userOperationClaimDto = _mapper.Map<UserOperationClaimDto>(userOperationClaim);
         return userOperationClaimDto;
     }
@@ -42,7 +39,7 @@ public class UserOperationManager : IUserOperationClaimService
     public async Task<UserOperationClaimListDto> GetList(PageRequest request
                                                            )
     {
-        IPaginate<UserOperationClaim> userOperationClaims = await _userOperationClaimRepository.GetListAsync(
+        IPaginate<UserOperationClaim> userOperationClaims = await _unitOfWork.userOperationClaimRepository.GetListAsync(
                                                                 index: request.Page,
                                                                 size: request.PageSize);
         UserOperationClaimListDto mappedUserOperationClaimListModel =
@@ -57,7 +54,7 @@ public class UserOperationManager : IUserOperationClaimService
     {
         UserOperationClaim mappedUserOperationClaim = _mapper.Map<UserOperationClaim>(request);
         UserOperationClaim createdUserOperationClaim =
-            await _userOperationClaimRepository.AddAsync(mappedUserOperationClaim);
+            await _unitOfWork.userOperationClaimRepository.AddAsync(mappedUserOperationClaim);
         CreatedUserOperationClaimDto createdUserOperationClaimDto =
             _mapper.Map<CreatedUserOperationClaimDto>(createdUserOperationClaim);
         return createdUserOperationClaimDto;
@@ -66,12 +63,12 @@ public class UserOperationManager : IUserOperationClaimService
     public async Task<DeletedUserOperationClaimDto> Delete(DeletedUserOperationClaimDto request
                                                             )
     {
-        UserOperationClaim? result = await _userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
+        UserOperationClaim? result = await _unitOfWork.userOperationClaimRepository.GetAsync(b => b.Id == request.Id);
         if (result == null) throw new BusinessException(UserOperationClaimMessages.UserOperationClaimNotExists);
 
         UserOperationClaim mappedUserOperationClaim = _mapper.Map<UserOperationClaim>(request);
         UserOperationClaim deletedUserOperationClaim =
-            await _userOperationClaimRepository.DeleteAsync(mappedUserOperationClaim);
+            await _unitOfWork.userOperationClaimRepository.DeleteAsync(mappedUserOperationClaim);
         DeletedUserOperationClaimDto deletedUserOperationClaimDto =
             _mapper.Map<DeletedUserOperationClaimDto>(deletedUserOperationClaim);
         return deletedUserOperationClaimDto;
@@ -82,7 +79,7 @@ public class UserOperationManager : IUserOperationClaimService
     {
         UserOperationClaim mappedUserOperationClaim = _mapper.Map<UserOperationClaim>(request);
         UserOperationClaim updatedUserOperationClaim =
-            await _userOperationClaimRepository.UpdateAsync(mappedUserOperationClaim);
+            await _unitOfWork.userOperationClaimRepository.UpdateAsync(mappedUserOperationClaim);
         UpdatedUserOperationClaimDto updatedUserOperationClaimDto =
             _mapper.Map<UpdatedUserOperationClaimDto>(updatedUserOperationClaim);
         return updatedUserOperationClaimDto;

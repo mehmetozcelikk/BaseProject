@@ -6,12 +6,12 @@ namespace BaseProject.Persistence.Contexts;
 
 public class BaseDbContext : DbContext
 {
-
+    //IConfiguration configuration;
     public BaseDbContext()
     {
 
-    }   
-    
+    }
+
     public DbSet<EmailAuthenticator> EmailAuthenticators { get; set; }
 
     public DbSet<OperationClaim> OperationClaims { get; set; }
@@ -24,13 +24,16 @@ public class BaseDbContext : DbContext
 
 
     public BaseDbContext(DbContextOptions options) : base(options)
-    { }
+    {
+
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         //if (!optionsBuilder.IsConfigured)
         //    base.OnConfiguring(
-        //        optionsBuilder.UseNpgsql(Configuration.GetConnectionString("SqlConnectionString")));
+        //        optionsBuilder.UseNpgsql(options => options.UseNpgsql(
+        //                                             configuration.GetConnectionString("SqlConnectionString"))));
 
     }
 
