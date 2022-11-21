@@ -27,8 +27,7 @@ public class UserOperationClaimsController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListUserOperationClaimQuery getListUserOperationClaimQuery = new() { PageRequest = pageRequest };
-        UserOperationClaimListModel result = await _userOperationClaimService.GetList(getListUserOperationClaimQuery);
+        var result = await _userOperationClaimService.GetList(pageRequest);
         return Ok(result);
     }
 
