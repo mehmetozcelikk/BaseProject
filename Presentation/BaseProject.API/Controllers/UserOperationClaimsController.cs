@@ -1,4 +1,5 @@
-﻿using BaseProject.Application.DTOs.Page;
+﻿using BaseProject.Application.Abstractions.Services;
+using BaseProject.Application.DTOs.Page;
 using BaseProject.Application.DTOs.UserOperationClaims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,17 @@ namespace BaseProject.API.Controllers;
 [ApiController]
 public class UserOperationClaimsController : BaseController
 {
-    [HttpGet("{Id}")]
-    public async Task<IActionResult> GetById([FromRoute] GetByIdUserOperationClaimQuery getByIdUserOperationClaimQuery)
+    private readonly IUserOperationClaimService _userOperationClaimService;
+
+    public UserOperationClaimsController(IUserOperationClaimService userOperationClaimService)
     {
-        UserOperationClaimDto result = await Mediator.Send(getByIdUserOperationClaimQuery);
+        _userOperationClaimService = userOperationClaimService;
+    }
+
+    [HttpGet("{Id}")]
+    public async Task<IActionResult> GetById([FromRoute] UserOperationClaimDto request)
+    {
+        UserOperationClaimDto result = await _userOperationClaimService.GetById(request);
         return Ok(result);
     }
 
@@ -20,28 +28,28 @@ public class UserOperationClaimsController : BaseController
     public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
         GetListUserOperationClaimQuery getListUserOperationClaimQuery = new() { PageRequest = pageRequest };
-        UserOperationClaimListModel result = await Mediator.Send(getListUserOperationClaimQuery);
+        UserOperationClaimListModel result = await _userOperationClaimService.GetList(getListUserOperationClaimQuery);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody] CreateUserOperationClaimCommand createUserOperationClaimCommand)
+    public async Task<IActionResult> Add([FromBody] CreatedUserOperationClaimDto request)
     {
-        CreatedUserOperationClaimDto result = await Mediator.Send(createUserOperationClaimCommand);
+        CreatedUserOperationClaimDto result = await _userOperationClaimService.Add(request);
         return Created("", result);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdateUserOperationClaimCommand updateUserOperationClaimCommand)
+    public async Task<IActionResult> Update([FromBody] UpdatedUserOperationClaimDto request)
     {
-        UpdatedUserOperationClaimDto result = await Mediator.Send(updateUserOperationClaimCommand);
+        UpdatedUserOperationClaimDto result = await _userOperationClaimService.Update(request);
         return Ok(result);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromBody] DeleteUserOperationClaimCommand deleteUserOperationClaimCommand)
+    public async Task<IActionResult> Delete([FromBody] DeletedUserOperationClaimDto request)
     {
-        DeletedUserOperationClaimDto result = await Mediator.Send(deleteUserOperationClaimCommand);
+        DeletedUserOperationClaimDto result = await _userOperationClaimService.Delete(request);
         return Ok(result);
     }
 }

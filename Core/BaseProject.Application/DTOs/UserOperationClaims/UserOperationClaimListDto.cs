@@ -1,8 +1,9 @@
-﻿namespace BaseProject.Application.DTOs.UserOperationClaims;
+﻿using BaseProject.Application.Paging;
 
-public class UserOperationClaimListDto
+namespace BaseProject.Application.DTOs.UserOperationClaims;
+
+public class UserOperationClaimListDto: BasePageableModel
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int OperationClaimId { get; set; }
+    public IList<UserOperationClaimDto> Items { get; set; }
+
 }
