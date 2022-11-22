@@ -129,7 +129,7 @@ public class AuthController : BaseController
         {
             UserId = getUserIdFromRequest()
         };
-        EnabledOtpAuthenticatorDto result = await _authService.EnableOtpAuthenticator(enableOtpAuthenticatorCommand);
+        var result = await _authService.EnableOtpAuthenticator(enableOtpAuthenticatorCommand);
 
         return Ok(result);
     }

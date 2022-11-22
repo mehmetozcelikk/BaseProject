@@ -24,6 +24,7 @@ namespace BaseProject.Persistence.Repositories.UnitOfWork
             userOperationClaimRepository = new UserOperationClaimRepository(_context);
             refreshTokenRepository = new RefreshTokenRepository(_context);
             operationClaimRepository = new OperationClaimRepository(_context);
+            otpAuthenticatorRepository = new OtpAuthenticatorRepository(_context);
         }
 
 

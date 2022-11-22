@@ -26,19 +26,24 @@ public interface IAuthService
     public Task<string> ConvertSecretKeyToString(byte[] secretKey);
     public Task SendAuthenticatorCode(User user);
     public Task VerifyAuthenticatorCode(User user, string authenticatorCode);
+
+
+
+    public Task<EnabledOtpAuthenticatorDto> EnableOtpAuthenticator(EnableOtpAuthenticatorDTO request);
+
+
+    public Task<EnableEmailAuthenticatorDTO> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request);
+    public Task<RefreshedTokensDto> RefreshToken(RefreshTokenDTO request);
+    public Task<LoggedDto> Login(UserLoginDTO request);
+
     public Task<RegisteredDto> Register(UserRegisterDTO request);
 
 
-
-
+    public Task<RevokeTokenDTO> RevokeToken(RevokeTokenDTO request);
 
     public Task<VerifyEmailAuthenticatorDTO> VerifyEmailAuthenticator(VerifyEmailAuthenticatorDTO request);
-    public Task<EnableEmailAuthenticatorDTO> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request);
-    public Task<LoggedDto> Login(UserLoginDTO request);
-    public Task<RefreshedTokensDto> RefreshToken(RefreshTokenDTO request);
-    public Task<EnabledOtpAuthenticatorDto> EnableOtpAuthenticator(EnableOtpAuthenticatorDTO request);
+
     public Task<VerifyOtpAuthenticatorDTO> VerifyOtpAuthenticator(VerifyOtpAuthenticatorDTO request);
-    public Task<RevokeTokenDTO> RevokeToken(RevokeTokenDTO request);
 
 
 

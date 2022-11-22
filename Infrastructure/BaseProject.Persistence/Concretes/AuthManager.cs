@@ -1,4 +1,5 @@
-﻿using BaseProject.Application.Abstractions.Services;
+﻿using AutoMapper;
+using BaseProject.Application.Abstractions.Services;
 using BaseProject.Application.Constants;
 using BaseProject.Application.DTOs.Auth;
 using BaseProject.Application.DTOs.User;
@@ -26,8 +27,9 @@ public class AuthManager : IAuthService
     private readonly IEmailAuthenticatorHelper _emailAuthenticatorHelper;
     private readonly IMailService _mailService;
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
 
-    public AuthManager(IUnitOfWork unitOfWork, ITokenHelper tokenHelper, IOtpAuthenticatorHelper otpAuthenticatorHelper,/* TokenOptions tokenOptions, */IEmailAuthenticatorHelper emailAuthenticatorHelper, IMailService mailService, IUserService userService)
+    public AuthManager(IUnitOfWork unitOfWork, ITokenHelper tokenHelper, IOtpAuthenticatorHelper otpAuthenticatorHelper,/* TokenOptions tokenOptions,*/ IEmailAuthenticatorHelper emailAuthenticatorHelper, IMailService mailService, IUserService userService, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _tokenHelper = tokenHelper;
@@ -36,41 +38,8 @@ public class AuthManager : IAuthService
         _emailAuthenticatorHelper = emailAuthenticatorHelper;
         _mailService = mailService;
         _userService = userService;
+        _mapper = mapper;
     }
-
-    //public async Task<RefreshToken> AddRefreshToken(RefreshToken refreshToken)
-    //{
-    //    RefreshToken addedRefreshToken = await _unitOfWork.refreshTokenRepository.AddAsync(refreshToken);
-    //    return addedRefreshToken;
-    //}
-
-    //public async Task<AccessToken> CreateAccessToken(User user)
-    //{
-    //    IPaginate<UserOperationClaim> userOperationClaims =
-    //       await _unitOfWork.userOperationClaimRepository.GetListAsync(u => u.UserId == user.Id,
-    //                                                        include: u =>
-    //                                                            u.Include(u => u.OperationClaim)
-    //       );
-    //    IList<OperationClaim> operationClaims =
-    //        userOperationClaims.Items.Select(u => new OperationClaim
-    //        { Id = u.OperationClaim.Id, Name = u.OperationClaim.Name }).ToList();
-
-    //    AccessToken accessToken = _tokenHelper.CreateToken(user, operationClaims);
-    //    return accessToken;
-    //}
-
-    //public async Task<RefreshToken> CreateRefreshToken(User user, string ipAddress)
-    //{
-    //    RefreshToken refreshToken = _tokenHelper.CreateRefreshToken(user, ipAddress);
-    //    return await Task.FromResult(refreshToken);
-    //}
-
-
-
-
-
-
-
 
 
 
@@ -101,7 +70,7 @@ public class AuthManager : IAuthService
     {
         IList<RefreshToken> refreshTokens = (await _unitOfWork.refreshTokenRepository.GetListAsync(r =>
                                                  r.UserId == userId &&
-                                                 r.Revoked == null && r.Expires >= DateTime.UtcNow )
+                                                 r.Revoked == null && r.Expires >= DateTime.UtcNow)
                                             ).Items;
         foreach (RefreshToken refreshToken in refreshTokens) await _unitOfWork.refreshTokenRepository.DeleteAsync(refreshToken);
     }
@@ -233,6 +202,43 @@ public class AuthManager : IAuthService
 
 
 
+
+
+
+
+    //
+    public async Task<EnableEmailAuthenticatorDTO> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request)
+    {
+        User user = await _userService.GetById(request.UserId);
+        if (user == null) throw new BusinessException(AuthMessages.UserDontExists);
+
+        if (user.AuthenticatorType != AuthenticatorType.None)
+            throw new BusinessException(AuthMessages.UserHaveAlreadyAAuthenticator);
+
+        user.AuthenticatorType = AuthenticatorType.Email;
+        await _userService.Update(user);
+
+        EmailAuthenticator emailAuthenticator = await CreateEmailAuthenticator(user);
+        EmailAuthenticator addedEmailAuthenticator =
+            await _unitOfWork.emailAuthenticatorRepository.AddAsync(emailAuthenticator);
+
+        var toEmailList = new List<MailboxAddress>
+            {
+                new($"{user.FirstName} {user.LastName}",user.Email)
+            };
+
+        _mailService.SendMail(new Mail
+        {
+            ToList = toEmailList,
+            Subject = "Verify Your Email - RentACar",
+            TextBody =
+                $"Click on the link to verify your email: {request.VerifyEmailUrlPrefix}?ActivationKey={HttpUtility.UrlEncode(addedEmailAuthenticator.ActivationKey)}"
+        });
+
+        return request; //todo: return dto?
+    }
+
+
     public async Task<EnabledOtpAuthenticatorDto> EnableOtpAuthenticator(EnableOtpAuthenticatorDTO request
                                                           )
     {
@@ -240,7 +246,9 @@ public class AuthManager : IAuthService
         if (user == null) throw new BusinessException(AuthMessages.UserDontExists);
         if (user.AuthenticatorType != AuthenticatorType.None)
             throw new BusinessException(AuthMessages.UserHaveAlreadyAAuthenticator);
-        OtpAuthenticator? isExistsOtpAuthenticator =
+
+        await _unitOfWork.otpAuthenticatorRepository.GetAsync(o => o.UserId == request.UserId);
+        var isExistsOtpAuthenticator =
             await _unitOfWork.otpAuthenticatorRepository.GetAsync(o => o.UserId == request.UserId);
 
         if (isExistsOtpAuthenticator is not null && isExistsOtpAuthenticator.IsVerified)
@@ -248,62 +256,55 @@ public class AuthManager : IAuthService
             await _unitOfWork.otpAuthenticatorRepository.DeleteAsync(isExistsOtpAuthenticator);
 
         OtpAuthenticator newOtpAuthenticator = await CreateOtpAuthenticator(user);
-        OtpAuthenticator addedOtpAuthenticator =
-            await _unitOfWork.otpAuthenticatorRepository.AddAsync(newOtpAuthenticator);
 
-        EnabledOtpAuthenticatorDto enabledOtpAuthenticatorDto = new()
+        OtpAuthenticator addedOtpAuthenticator =
+            await _unitOfWork.otpAuthenticatorRepository.AddAsync(newOtpAuthenticator);   
+            
+            
+            EnabledOtpAuthenticatorDto enabledOtpAuthenticatorDto = new()
         {
             SecretKey = await ConvertSecretKeyToString(addedOtpAuthenticator.SecretKey)
         };
         return enabledOtpAuthenticatorDto;
+        
+
     }
 
-    //public async Task<VerifyEmailAuthenticatorDTO> VerifyOtpAuthenticator(VerifyEmailAuthenticatorDTO request)
-    //{
-    //    EmailAuthenticator? emailAuthenticator =
-    //        await _unitOfWork.emailAuthenticatorRepository.GetAsync(
-    //            e => e.ActivationKey == request.ActivationKey);
-    //    if (emailAuthenticator is null) throw new BusinessException(AuthMessages.EmailAuthenticatorDontExists);
+    // Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEwMiIsImVtYWlsIjoic3RyaW5nYWRhc2RzYWRzYWQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoic3RyaW5nIHN0cmluZyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFzZHNhZGFzIiwibmJmIjoxNjY5MTA3MDcwLCJleHAiOjE2NjkxODAyNzAsImlzcyI6InJlbnRhY2FyQHJlbnRhY2FyLmNvbSIsImF1ZCI6InJlbnRhY2FyQHJlbnRhY2FyLmNvbSJ9.4KTJMjLr1RCsqnRwOmZXfdpTK0Z-BKriy3FGlPY1QE-ezJXjfE-PvOBBSKfVUQfQP6FpzH4WbRttLzpol-9tMg
 
-    //    if (emailAuthenticator.ActivationKey is null) throw new BusinessException(AuthMessages.EmailActivationKeyDontExists);
-
-    //    emailAuthenticator.ActivationKey = null;
-    //    emailAuthenticator.IsVerified = true;
-    //    await _unitOfWork.emailAuthenticatorRepository.UpdateAsync(emailAuthenticator);
-
-    //    return request;
-    //}
-    public async Task<RevokeTokenDTO> RevokeToken(RevokeTokenDTO request )
+    public async Task<LoggedDto> Login(UserLoginDTO request)
     {
-        RefreshToken? refreshToken = await GetRefreshTokenByToken(request.Token);
-        if (refreshToken == null) throw new BusinessException(AuthMessages.RefreshDontExists);
+        User? user = await _userService.GetByEmail(request.userForLoginDto.Email);
+        if (user == null) throw new BusinessException(AuthMessages.UserDontExists);
 
-        if (refreshToken.Revoked != null && DateTime.UtcNow >= refreshToken.Expires)
-            throw new BusinessException(AuthMessages.InvalidRefreshToken);
-        await RevokeRefreshToken(refreshToken, request.IPAddress, "Revoked without replacement");
 
-        //RevokedTokenDto revokedTokenDto = _mapper.Map<RevokedTokenDto>(refreshToken);
-        return request;
-    }
+        User? user2 = await _unitOfWork.userRepository.GetAsync(u => u.Id == user.Id);
+        if (!HashingHelper.VerifyPasswordHash(request.userForLoginDto.Password, user.PasswordHash, user.PasswordSalt))
+            throw new BusinessException(AuthMessages.PasswordDontMatch);
 
-    public async Task<VerifyOtpAuthenticatorDTO> VerifyEmailAuthenticator(VerifyOtpAuthenticatorDTO request )
-    {
-        OtpAuthenticator? otpAuthenticator =
-            await _unitOfWork.otpAuthenticatorRepository.GetAsync(e => e.UserId == request.UserId);
-        if (otpAuthenticator is null) throw new BusinessException(AuthMessages.OtpAuthenticatorDontExists);
+        LoggedDto loggedDto = new();
 
-        User user = await _userService.GetById(request.UserId);
+        if (user.AuthenticatorType is not AuthenticatorType.None)
+        {
+            if (request.userForLoginDto.AuthenticatorCode is null)
+            {
+                await SendAuthenticatorCode(user);
+                loggedDto.RequiredAuthenticatorType = user.AuthenticatorType;
+                return loggedDto;
+            }
 
-        otpAuthenticator.IsVerified = true;
-        user.AuthenticatorType = AuthenticatorType.Otp;
+            await VerifyAuthenticatorCode(user, request.userForLoginDto.AuthenticatorCode);
+        }
 
-        if (otpAuthenticator is not null && otpAuthenticator.IsVerified)
-            throw new BusinessException(AuthMessages.AlreadyVerifiedOtpAuthenticatorIsExists);
+        AccessToken createdAccessToken = await CreateAccessToken(user);
 
-        await _unitOfWork.otpAuthenticatorRepository.UpdateAsync(otpAuthenticator);
-        await _userService.Update(user);
+        RefreshToken createdRefreshToken = await CreateRefreshToken(user, request.IPAddress);
+        RefreshToken addedRefreshToken = await AddRefreshToken(createdRefreshToken);
+        await DeleteOldRefreshTokens(user.Id);
 
-        return request;
+        loggedDto.AccessToken = createdAccessToken;
+        loggedDto.RefreshToken = addedRefreshToken;
+        return loggedDto;
     }
 
 
@@ -334,10 +335,6 @@ public class AuthManager : IAuthService
         { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
         return refreshedTokensDto;
     }
-
-
-
-
 
 
 
@@ -381,6 +378,21 @@ public class AuthManager : IAuthService
 
 
 
+    public async Task<RevokeTokenDTO> RevokeToken(RevokeTokenDTO request)
+    {
+        RefreshToken? refreshToken = await GetRefreshTokenByToken(request.Token);
+        if (refreshToken == null) throw new BusinessException(AuthMessages.RefreshDontExists);
+
+        if (refreshToken.Revoked != null && DateTime.UtcNow >= refreshToken.Expires)
+            throw new BusinessException(AuthMessages.InvalidRefreshToken);
+        await RevokeRefreshToken(refreshToken, request.IPAddress, "Revoked without replacement");
+
+        //RevokedTokenDto revokedTokenDto = _mapper.Map<RevokedTokenDto>(refreshToken);
+        return request;
+    }
+
+
+
 
 
     public async Task<VerifyEmailAuthenticatorDTO> VerifyEmailAuthenticator(VerifyEmailAuthenticatorDTO request)
@@ -401,79 +413,34 @@ public class AuthManager : IAuthService
 
 
 
-
-
-
-
-    public async Task<EnableEmailAuthenticatorDTO> EnableEmailAuthenticator(EnableEmailAuthenticatorDTO request)
+    public async Task<VerifyOtpAuthenticatorDTO> VerifyOtpAuthenticator(VerifyOtpAuthenticatorDTO request)
     {
+        OtpAuthenticator? otpAuthenticator =
+            await _unitOfWork.otpAuthenticatorRepository.GetAsync(e => e.UserId == request.UserId);
+        if (otpAuthenticator is null) throw new BusinessException(AuthMessages.OtpAuthenticatorDontExists);
+
         User user = await _userService.GetById(request.UserId);
-        if (user == null) throw new BusinessException(AuthMessages.UserDontExists);
 
-        if (user.AuthenticatorType != AuthenticatorType.None)
-            throw new BusinessException(AuthMessages.UserHaveAlreadyAAuthenticator);
+        otpAuthenticator.IsVerified = true;
+        user.AuthenticatorType = AuthenticatorType.Otp;
 
-        user.AuthenticatorType = AuthenticatorType.Email;
+        if (otpAuthenticator is not null && otpAuthenticator.IsVerified)
+            throw new BusinessException(AuthMessages.AlreadyVerifiedOtpAuthenticatorIsExists);
+
+        await _unitOfWork.otpAuthenticatorRepository.UpdateAsync(otpAuthenticator);
         await _userService.Update(user);
 
-        EmailAuthenticator emailAuthenticator = await CreateEmailAuthenticator(user);
-        EmailAuthenticator addedEmailAuthenticator =
-            await _unitOfWork.emailAuthenticatorRepository.AddAsync(emailAuthenticator);
-
-        var toEmailList = new List<MailboxAddress>
-            {
-                new($"{user.FirstName} {user.LastName}",user.Email)
-            };
-
-        _mailService.SendMail(new Mail
-        {
-            ToList = toEmailList,
-            Subject = "Verify Your Email - RentACar",
-            TextBody =
-                $"Click on the link to verify your email: {request.VerifyEmailUrlPrefix}?ActivationKey={HttpUtility.UrlEncode(addedEmailAuthenticator.ActivationKey)}"
-        });
-
-        return request; //todo: return dto?
+        return request;
     }
 
 
-    public async Task<LoggedDto> Login(UserLoginDTO request)
-    {
-        User? user = await _userService.GetByEmail(request.userForLoginDto.Email);
-        if (user == null) throw new BusinessException(AuthMessages.UserDontExists);
 
 
-        User? user2 = await _unitOfWork.userRepository.GetAsync(u => u.Id == user.Id);
-        if (!HashingHelper.VerifyPasswordHash(request.userForLoginDto.Password, user.PasswordHash, user.PasswordSalt))
-            throw new BusinessException(AuthMessages.PasswordDontMatch);
 
-        LoggedDto loggedDto = new();
 
-        if (user.AuthenticatorType is not AuthenticatorType.None)
-        {
-            if (request.userForLoginDto.AuthenticatorCode is null)
-            {
-                await SendAuthenticatorCode(user);
-                loggedDto.RequiredAuthenticatorType = user.AuthenticatorType;
-                return loggedDto;
-            }
 
-            await VerifyAuthenticatorCode(user, request.userForLoginDto.AuthenticatorCode);
-        }
 
-        AccessToken createdAccessToken = await CreateAccessToken(user);
 
-        RefreshToken createdRefreshToken = await CreateRefreshToken(user, request.IPAddress);
-        RefreshToken addedRefreshToken = await AddRefreshToken(createdRefreshToken);
-        await DeleteOldRefreshTokens(user.Id);
 
-        loggedDto.AccessToken = createdAccessToken;
-        loggedDto.RefreshToken = addedRefreshToken;
-        return loggedDto;
-    }
 
-    public Task<VerifyOtpAuthenticatorDTO> VerifyOtpAuthenticator(VerifyOtpAuthenticatorDTO request)
-    {
-        throw new NotImplementedException();
-    }
 }
