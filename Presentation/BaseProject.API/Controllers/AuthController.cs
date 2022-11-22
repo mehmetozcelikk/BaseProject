@@ -48,13 +48,14 @@ public class AuthController : BaseController
     /// 
     /// </summary>
     /// <returns></returns>
-    [HttpGet("GetAllUsers"), Authorize()]
+    [HttpGet("GetAllUsers")  ]
     public async Task<IActionResult> GetAllUsers([FromQuery] PageRequest pageRequest)
     {
         var aaa = await _userService.GetUsers(pageRequest);
-
-
-        return Ok(aaa);
+        UserLoginDTO loginDTO = new UserLoginDTO();
+        loginDTO.IPAddress = "adsdas";
+         
+        return Ok(loginDTO);
     }
 
 

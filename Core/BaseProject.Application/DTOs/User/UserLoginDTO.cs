@@ -10,5 +10,7 @@ namespace BaseProject.Application.DTOs.User
     {
         public UserForLoginDto userForLoginDto { get; set; }
         public string IPAddress { get; set; }
+        public string? denemememememe { get; set; }
+        public int? denememememesadasdasdasdme { get; set; }
     }
 }

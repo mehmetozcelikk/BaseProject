@@ -35,21 +35,25 @@ public class BaseDbContext : DbContext
         //                                             configuration.GetConnectionString("SqlConnectionString"))));
 
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
 
 
-    //public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
-    //{
-    //    Configuration = configuration;
-    //}
+    }
+
+        //public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
+        //{
+        //    Configuration = configuration;
+        //}
 
 
 
 
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    if (!optionsBuilder.IsConfigured)
-    //        base.OnConfiguring(
-    //            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("SomeConnectionString")));
-    //}
-}
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //        base.OnConfiguring(
+        //            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("SomeConnectionString")));
+        //}
+    }
